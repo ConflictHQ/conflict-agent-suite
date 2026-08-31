@@ -1,0 +1,15 @@
+# Single: the smallest useful workflow -- one dispatch, no hand-off. This is
+# what a schedule points at when you want a periodic check with no ceremony.
+
+[workflow]
+slug        = "triage-only"
+name        = "Triage Only"
+pattern     = "single"
+description = "One triage pass across the watched apps."
+
+[[stage]]
+kind       = "agent_dispatch"
+role       = "triage"
+agent      = "triage"
+on_failure = "retry"
+timeout    = 300

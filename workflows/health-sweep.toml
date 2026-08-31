@@ -1,0 +1,36 @@
+# Chained: triage the watched apps, summarize what came back, gate on a human.
+# Each stage consumes the prior stage's output via ASTROLIFT_AGENT_INPUT.
+
+[workflow]
+slug        = "health-sweep"
+name        = "Health Sweep"
+pattern     = "chained"
+description = "Triage the demo apps, brief the result, and hold for a human decision."
+
+[[stage]]
+kind       = "agent_dispatch"
+role       = "triage"
+agent      = "triage"
+on_failure = "retry"
+timeout    = 300
+
+[[stage]]
+kind       = "agent_dispatch"
+role       = "summarizer"
+agent      = "summarize"
+on_failure = "fail"
+timeout    = 300
+
+[[stage]]
+kind       = "agent_dispatch"
+role       = "reviewer"
+agent      = "review"
+on_failure = "fail"
+timeout    = 300
+
+[[stage]]
+kind      = "human_gate"
+role      = "approver"
+prompt    = "Triage found something worth a decision. Acknowledge?"
+approvers = ["team:platform"]
+timeout   = 86400
