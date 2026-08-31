@@ -1,0 +1,33 @@
+# astrolift.toml — one agent, per the sanctioned agents/<slug>/ layout.
+#
+# States a case for the human gate that follows it.
+#
+# kind=agent + run_family=task means this spawns as a Job on dispatch and
+# holds no resource between runs. Idle cost is zero.
+
+astrolift_version = 1
+name = "conflict-agent-review"
+
+[app]
+slug = "conflict-agent-review"
+display_name = "Agent: review"
+
+[environments.production]
+
+[[workloads]]
+name = "review"
+kind = "agent"
+run_family = "task"
+cpu_request = "50m"
+cpu_limit = "250m"
+memory_request = "128Mi"
+memory_limit = "256Mi"
+
+  [[workloads.containers]]
+  name = "review"
+  is_primary = true
+  command = ["python", "agent.py"]
+
+    [workloads.containers.env]
+    PYTHONUNBUFFERED = "1"
+    AGENT_ROLE = "review"
